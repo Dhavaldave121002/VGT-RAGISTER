@@ -11,10 +11,24 @@ const SERVICES = [
   { id: 'google', name: 'Google Ads and Management Service', icon: '📈', desc: 'Premium PPC structures, conversion rate optimization, keyword mapping, audience targeting, and real-time dashboard analytics.', color: 'sc-google' }
 ];
 
-const TIME_SLOTS = [
-  "09:00 AM", "10:00 AM", "11:00 AM", "12:00 PM",
-  "01:00 PM", "02:00 PM", "03:00 PM", "04:00 PM", "05:00 PM"
-];
+const getDynamicTimeSlots = (dateString) => {
+  if (!dateString) return [];
+  const date = new Date(dateString);
+  const dayOfWeek = date.getDay(); // 0 is Sunday, 1-6 are Monday-Saturday
+
+  let startHour = (dayOfWeek === 0) ? 9 : 8; // 9 AM for Sunday, 8 AM for others
+  const endHour = 21; // 9 PM
+
+  const slots = [];
+  for (let i = startHour; i <= endHour; i++) {
+    const period = i >= 12 ? 'PM' : 'AM';
+    let hour = i % 12;
+    if (hour === 0) hour = 12;
+    const hourStr = hour < 10 ? '0' + hour : hour.toString();
+    slots.push(`${hourStr}:00 ${period}`);
+  }
+  return slots;
+};
 
 const GOOGLE_SHEETS_API = "https://script.google.com/macros/s/AKfycbz7ME6aKnWT6jwhHs9s0XhlpHRvkjMZr9bpVnvjhYnW5CqP0OPb6viNoLH93v_1ekjcCw/exec";
 
@@ -122,6 +136,7 @@ export default function App() {
     description: '',
     meetingDate: '',
     meetingTime: '',
+    meetingMode: '',
     referredBy: ''
   });
   const [availableSlots, setAvailableSlots] = useState([]);
@@ -169,6 +184,7 @@ export default function App() {
             service: r.service || '',
             meetingDate: r.meetingDate || '',
             meetingTime: r.meetingTime || '',
+            meetingMode: r.meetingMode || 'Offline - Ahmedabad City',
             description: r.description || '',
             referredBy: r.referredBy || '',
             myReferralCode: r.myReferralCode || '',
@@ -228,7 +244,8 @@ export default function App() {
       .map(r => r.meetingTime);
 
     // Map all standard timeslots, locking out those already booked
-    const slotsInfo = TIME_SLOTS.map(slot => ({
+    const timeSlots = getDynamicTimeSlots(date);
+    const slotsInfo = timeSlots.map(slot => ({
       time: slot,
       available: !booked.includes(slot)
     }));
@@ -268,6 +285,10 @@ export default function App() {
       }
       if (!formData.phone.trim() || formData.phone.trim().length < 7) {
         addToast("Please enter a valid phone number.", "error");
+        return false;
+      }
+      if (!formData.meetingMode) {
+        addToast("Please select a meeting mode/location.", "error");
         return false;
       }
       return true;
@@ -321,6 +342,7 @@ export default function App() {
       service: Array.isArray(formData.service) ? formData.service.join(', ') : formData.service,
       meetingDate: formData.meetingDate,
       meetingTime: formData.meetingTime,
+      meetingMode: formData.meetingMode,
       description: formData.description ? formData.description.trim() : "",
       referredBy: formData.referredBy ? formData.referredBy.trim() : "",
       myReferralCode: myReferralCode,
@@ -372,6 +394,7 @@ export default function App() {
       description: '',
       meetingDate: tomorrowFormatted,
       meetingTime: '',
+      meetingMode: '',
       referredBy: ''
     });
     setClientStep(1);
@@ -478,7 +501,8 @@ export default function App() {
       .filter(r => r.id !== id && r.meetingDate === date && r.status !== 'cancelled')
       .map(r => r.meetingTime);
 
-    const slotsInfo = TIME_SLOTS.map(slot => ({
+    const timeSlots = getDynamicTimeSlots(date);
+    const slotsInfo = timeSlots.map(slot => ({
       time: slot,
       available: !booked.includes(slot)
     }));
@@ -593,7 +617,7 @@ export default function App() {
       return;
     }
 
-    const headers = ["Registration ID", "Client Name", "Email", "Phone", "Company", "Service Selected", "Date", "Time Slot", "Status", "Referred By", "Created At"];
+    const headers = ["Registration ID", "Client Name", "Email", "Phone", "Company", "Service Selected", "Date", "Time Slot", "Meeting Mode", "Status", "Referred By", "Created At"];
     const csvRows = [headers.join(",")];
 
     filteredRegistrations.forEach(r => {
@@ -606,6 +630,7 @@ export default function App() {
         `"${r.service}"`,
         `"${r.meetingDate}"`,
         `"${r.meetingTime}"`,
+        `"${r.meetingMode || 'Offline - Ahmedabad City'}"`,
         `"${r.status}"`,
         `"${r.referredBy || ''}"`,
         `"${r.createdAt}"`
@@ -791,7 +816,15 @@ export default function App() {
                     </div>
                     <div className="form-group">
                       <label>Referred By (Optional)</label>
-                      <input type="text" placeholder="Enter referral name or code" value={formData.referredBy} onChange={e => setFormData(prev => ({ ...prev, referredBy: e.target.value }))} style={{ height: '100%' }} />
+                      <input type="text" placeholder="Enter referral name or code" value={formData.referredBy} onChange={e => setFormData(prev => ({ ...prev, referredBy: e.target.value }))} style={{ marginBottom: '15px' }} />
+                      
+                      <label>Meeting Mode / Location *</label>
+                      <select value={formData.meetingMode} onChange={e => setFormData(prev => ({ ...prev, meetingMode: e.target.value }))} required style={{ width: '100%', padding: '12px 16px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', borderRadius: 'var(--radius-md)', outline: 'none' }}>
+                        <option value="" disabled style={{color: '#000'}}>Select Meeting Mode...</option>
+                        <option value="Offline (Face-to-Face) - Ahmedabad Only" style={{color: '#000'}}>Offline (Face-to-Face) - Ahmedabad Only</option>
+                        <option value="Online Meeting - Outside Ahmedabad" style={{color: '#000'}}>Online Meeting - Outside Ahmedabad</option>
+                        <option value="Online Meeting - Foreign Client" style={{color: '#000'}}>Online Meeting - Foreign Client</option>
+                      </select>
                     </div>
                   </div>
 
@@ -870,6 +903,10 @@ export default function App() {
                       <div className="summary-row">
                         <span className="summary-label">Service Selected:</span>
                         <span className="summary-value service-badge">{bookingSuccessData.service}</span>
+                      </div>
+                      <div className="summary-row">
+                        <span className="summary-label">Meeting Mode:</span>
+                        <span className="summary-value" style={{ fontWeight: 600 }}>{bookingSuccessData.meetingMode}</span>
                       </div>
                       <div className="summary-row">
                         <span className="summary-label">Date Scheduled:</span>
