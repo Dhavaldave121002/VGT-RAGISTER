@@ -83,11 +83,24 @@ body {
   100% { transform: translate(-5%, -8%) scale(0.85) rotate(360deg); }
 }
 
-/* Custom Scrollbar */
+/* Custom Scrollbars */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.1) var(--bg-primary);
+}
+
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg-primary); }
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--primary-light); }
+
+.slots-grid::-webkit-scrollbar {
+  width: 4px;
+}
+.slots-grid::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.08);
+  border-radius: 10px;
+}
 
 /* Typography */
 h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; }
@@ -979,6 +992,24 @@ footer {
     justify-content: center;
     gap: 20px;
   }
+  
+  /* Perfect responsive sizing for buttons & tables */
+  .btn-primary, .btn-secondary, .btn-accent {
+    padding: 12px 20px;
+    font-size: 0.95rem;
+  }
+  .admin-table th, .admin-table td {
+    padding: 12px 10px;
+    font-size: 0.85rem;
+  }
+  /* Optimizing glow performance on mobile */
+  .orb-1 { width: 250px; height: 250px; }
+  .orb-2 { width: 280px; height: 280px; }
+  .orb-3 { width: 200px; height: 200px; }
+  .glow-orb {
+    filter: blur(80px);
+    opacity: 0.35;
+  }
 }
 
 @media (max-width: 480px) {
@@ -1054,5 +1085,10 @@ footer {
   }
   .modal-content {
     padding: 20px;
+  }
+  
+  .btn-primary, .btn-secondary, .btn-accent {
+    padding: 10px 16px;
+    font-size: 0.9rem;
   }
 }

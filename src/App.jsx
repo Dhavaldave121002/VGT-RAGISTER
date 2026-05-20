@@ -98,6 +98,7 @@ const getServiceIcon = (id) => {
 export default function App() {
   // 3D Card Tilt & Spotlight Handlers
   const handleCardMouseMove = (e) => {
+    if (window.innerWidth <= 768) return;
     const card = e.currentTarget;
     const rect = card.getBoundingClientRect();
     const x = e.clientX - rect.left;
