@@ -95,6 +95,68 @@ const getServiceIcon = (id) => {
   }
 };
 
+// Static Pages Components
+const TermsPage = () => (
+  <div className="static-page">
+    <h2 style={{ fontSize: '2.5rem', marginBottom: '20px', color: 'var(--primary-light)' }}>Terms and Conditions</h2>
+    <p style={{ color: 'var(--text-secondary)', marginBottom: '40px' }}>Last updated: {new Date().toLocaleDateString()}</p>
+    <div className="static-content" style={{ lineHeight: '1.8', color: 'var(--text-primary)' }}>
+      <h3 style={{ marginTop: '30px', marginBottom: '15px', color: 'var(--secondary)' }}>1. Agreement to Terms</h3>
+      <p style={{ marginBottom: '20px' }}>By accessing or using our services, you agree to be bound by these Terms and Conditions and our Privacy Policy. If you disagree with any part of the terms, you may not access the service.</p>
+      
+      <h3 style={{ marginTop: '30px', marginBottom: '15px', color: 'var(--secondary)' }}>2. Intellectual Property</h3>
+      <p style={{ marginBottom: '20px' }}>The Service and its original content, features and functionality are and will remain the exclusive property of VGT Service System and its licensors. Our trademarks and trade dress may not be used in connection with any product or service without the prior written consent of VGT.</p>
+
+      <h3 style={{ marginTop: '30px', marginBottom: '15px', color: 'var(--secondary)' }}>3. Termination</h3>
+      <p style={{ marginBottom: '20px' }}>We may terminate or suspend access to our Service immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms.</p>
+    </div>
+  </div>
+);
+
+const PrivacyPage = () => (
+  <div className="static-page">
+    <h2 style={{ fontSize: '2.5rem', marginBottom: '20px', color: 'var(--primary-light)' }}>Privacy Policy</h2>
+    <p style={{ color: 'var(--text-secondary)', marginBottom: '40px' }}>Last updated: {new Date().toLocaleDateString()}</p>
+    <div className="static-content" style={{ lineHeight: '1.8', color: 'var(--text-primary)' }}>
+      <h3 style={{ marginTop: '30px', marginBottom: '15px', color: 'var(--secondary)' }}>1. Information Collection</h3>
+      <p style={{ marginBottom: '20px' }}>We collect information you provide directly to us when you request or purchase products, services, or information from us, register with us, participate in public forums or other activities on our sites and applications, or otherwise interact with us.</p>
+      
+      <h3 style={{ marginTop: '30px', marginBottom: '15px', color: 'var(--secondary)' }}>2. Use of Information</h3>
+      <p style={{ marginBottom: '20px' }}>We may use the information we collect from and about you to fulfill your requests for products, services, and information; analyze the use of our services; and personalize the content and advertising that you see.</p>
+
+      <h3 style={{ marginTop: '30px', marginBottom: '15px', color: 'var(--secondary)' }}>3. Data Security</h3>
+      <p style={{ marginBottom: '20px' }}>We implement appropriate technical and organizational measures designed to protect your personal information from accidental loss and from unauthorized access, use, alteration, and disclosure.</p>
+    </div>
+  </div>
+);
+
+const SupportPage = () => (
+  <div className="static-page">
+    <h2 style={{ fontSize: '2.5rem', marginBottom: '20px', color: 'var(--primary-light)' }}>Support Center</h2>
+    <p style={{ color: 'var(--text-secondary)', marginBottom: '40px', fontSize: '1.2rem' }}>We're here to help you 24/7</p>
+    <div className="support-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
+      <div className="support-card glass-panel" style={{ padding: '30px', textAlign: 'center', borderRadius: 'var(--radius-lg)' }}>
+        <div className="support-icon" style={{ fontSize: '3rem', marginBottom: '15px' }}>📧</div>
+        <h3 style={{ marginBottom: '10px' }}>Email Support</h3>
+        <p style={{ color: 'var(--secondary-light)', marginBottom: '10px' }}>support@vgtsystem.com</p>
+        <p className="text-muted" style={{ fontSize: '0.85rem' }}>Expected response: 2-4 hours</p>
+      </div>
+      <div className="support-card glass-panel" style={{ padding: '30px', textAlign: 'center', borderRadius: 'var(--radius-lg)' }}>
+        <div className="support-icon" style={{ fontSize: '3rem', marginBottom: '15px' }}>📞</div>
+        <h3 style={{ marginBottom: '10px' }}>Phone Support</h3>
+        <p style={{ color: 'var(--secondary-light)', marginBottom: '10px' }}>+1 (800) 123-4567</p>
+        <p className="text-muted" style={{ fontSize: '0.85rem' }}>Available Mon-Fri, 9AM-5PM EST</p>
+      </div>
+      <div className="support-card glass-panel" style={{ padding: '30px', textAlign: 'center', borderRadius: 'var(--radius-lg)' }}>
+        <div className="support-icon" style={{ fontSize: '3rem', marginBottom: '15px' }}>💬</div>
+        <h3 style={{ marginBottom: '10px' }}>Live Chat</h3>
+        <p style={{ color: 'var(--secondary-light)', marginBottom: '10px' }}>Start a new conversation</p>
+        <p className="text-muted" style={{ fontSize: '0.85rem' }}>Online agents available now</p>
+      </div>
+    </div>
+  </div>
+);
+
 export default function App() {
   // 3D Card Tilt & Spotlight Handlers
   const handleCardMouseMove = (e) => {
@@ -960,6 +1022,17 @@ export default function App() {
         </main>
       )}
 
+      {/* STATIC PAGES VIEW */}
+      {['terms', 'privacy', 'support'].includes(view) && (
+        <main className="static-page-wrapper" style={{ minHeight: '60vh', padding: '0 24px' }}>
+          <div className="glass-panel" style={{ padding: '50px', borderRadius: 'var(--radius-xl)', maxWidth: '950px', margin: '100px auto', position: 'relative', zIndex: 10 }}>
+            {view === 'terms' && <TermsPage />}
+            {view === 'privacy' && <PrivacyPage />}
+            {view === 'support' && <SupportPage />}
+          </div>
+        </main>
+      )}
+
       {/* ADMIN PORTAL VIEW */}
       {view === 'admin' && (
         <main>
@@ -1308,9 +1381,12 @@ export default function App() {
             <span className="gradient-text">VGT Service System</span>
           </div>
           <p className="footer-copy">&copy; 2026 VGT Service Registration System. All Rights Reserved. Double-booking conflict protected.</p>
-          <div className="footer-links">
+          <div className="footer-links" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '15px' }}>
             <button className="nav-link" style={{ fontSize: '0.85rem', fontWeight: 500 }} onClick={() => { setView('client'); window.history.pushState({}, '', '/'); setClientStep(1); document.getElementById('services-list')?.scrollIntoView({ behavior: 'smooth' }); }}>Services</button>
             <button className="nav-link" style={{ fontSize: '0.85rem', fontWeight: 500 }} onClick={() => { setView('client'); window.history.pushState({}, '', '/'); setClientStep(1); document.getElementById('booking-portal')?.scrollIntoView({ behavior: 'smooth' }); }}>Bookings</button>
+            <button className="nav-link" style={{ fontSize: '0.85rem', fontWeight: 500 }} onClick={() => { setView('terms'); window.scrollTo({top:0, behavior:'smooth'}); }}>Terms & Conditions</button>
+            <button className="nav-link" style={{ fontSize: '0.85rem', fontWeight: 500 }} onClick={() => { setView('privacy'); window.scrollTo({top:0, behavior:'smooth'}); }}>Privacy Policy</button>
+            <button className="nav-link" style={{ fontSize: '0.85rem', fontWeight: 500 }} onClick={() => { setView('support'); window.scrollTo({top:0, behavior:'smooth'}); }}>Support Center</button>
           </div>
         </div>
       </footer>
